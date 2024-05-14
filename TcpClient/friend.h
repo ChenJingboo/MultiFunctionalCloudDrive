@@ -19,17 +19,19 @@ class Friend : public QWidget
 public:
     explicit Friend(QWidget *parent = nullptr);
     void showOnlineUser(PDU* pdu); // 显示在线好友
+    void updateFriendList(PDU *pdu); // 刷新好友列表
     QString getStrSearchName() const;
 
 signals:
 
 public slots:
     void showOnline();
-    void searchUser(); // 处理查找用户按钮点击信号的槽函数
+    void searchUser();      // 处理查找用户按钮点击信号的槽函数
+    void flushFriendList(); // 刷新好友按钮的槽函数
 
 private:
     QTextEdit* m_pShowMsgTE;
-    QListWidget* m_pFriendListwidget;
+    QListWidget* m_pFriendListwidget;   //好友列表
     QLineEdit* m_pInputMsgLE;
 
     QPushButton* m_pDelFriendPB;

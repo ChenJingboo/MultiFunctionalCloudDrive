@@ -49,6 +49,12 @@ void MyTcpSocket::recvMsg()
             resPdu = handleSearchUserRequest(pdu);
             break;
         }
+        case ENUM_MSG_TYPE_FLSUH_FRIEND_REQUEST: // 刷新好友请求
+        {
+            qDebug() << "Accept case ENUM_MSG_TYPE_SEARCH_USER_REQUEST" ;
+            resPdu = handleFlushFriendRequest(pdu);
+            break;
+        }
         default:
             break;
     }

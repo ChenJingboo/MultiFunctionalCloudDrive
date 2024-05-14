@@ -22,6 +22,7 @@ public:
     int handleAddFriend(const char *addedName, const char *sourceName); // 处理添加用户，0对方存在不在线，1对方存在在线，2不存在，3已是好友，4请求错误
     bool handleAddFriendAgree(const char *addedName, const char *sourceName); // 处理同意好友申请
     int getIdByUserName(const char *name);                // 根据用户名获取用户id
+    QStringList handleFlushFriendRequest(const char *name);  // 刷新好友列表请求
     ~DBOperate(); // 析构函数，关闭数据库连接
 
 signals:

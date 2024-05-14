@@ -128,6 +128,11 @@ void TcpClient::recvMsg()
         QMessageBox::information(this, "添加好友", QString("%1 已拒绝您的好友申请！").arg(pdu -> caData));
         break;
     }
+    case ENUM_MSG_TYPE_FLUSH_FRIEND_RESPOND: // 刷新好友响应
+    {
+        OpenWidget::getInstance().getFriend()->updateFriendList(pdu);
+        break;
+    }
     default:
         break;
     }

@@ -173,3 +173,31 @@ PDU* handleAddFriendRequest(PDU* pdu){
         }
         return resPdu;
 }
+
+PDU* handleFlushFriendRequest(PDU* pdu){
+
+    qDebug() << "Enter PDU* handleFlushFriendRequest(PDU* pdu)";
+
+    char caName[32] = {'\0'};
+
+    strncpy(caName, pdu -> caData, 32);
+
+    QStringList strList = DBOperate::getInstance().handleFlushFriendRequest(caName);
+    qDebug() << "caName = " << caName;
+
+    uint uiMsgLen = strList.size() / 2 * 36; // 36 char[32] 好友名字+ 4 int 在线状态
+
+    PDU* resPdu = mkPDU(uiMsgLen);
+    resPdu -> uiMsgType = ENUM_MSG_TYPE_FLUSH_FRIEND_RESPOND;
+    for(int i = 0; i * 2 < strList.size(); ++ i)
+    {
+//        strncpy((char*)(resPdu -> caMsg) + 36 * i, strList.at(i * 2).toStdString().c_str(), 32);
+//        strncpy((char*)(resPdu -> caMsg) + 36 * i + 32, strList.at(i * 2 + 1).toStdString().c_str(), 4);
+
+        //测试老方法
+        memcpy((char*)(resPdu->caMsg)+i*32, strList.at(i).toStdString().c_str(), strList.at(i).size());
+
+    }
+
+    return resPdu;
+}

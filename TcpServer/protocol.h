@@ -55,6 +55,9 @@ enum ENUM_MSG_TYPE
     ENUM_MSG_TYPE_ADD_FRIEND_AGREE,     // 被添加好友消息回复同意
     ENUM_MSG_TYPE_ADD_FRIEND_REJECT,    // 被添加好友消息回复拒绝
 
+    ENUM_MSG_TYPE_FLSUH_FRIEND_REQUEST, // 刷新好友请求
+    ENUM_MSG_TYPE_FLUSH_FRIEND_RESPOND, // 刷新好友响应
+
     ENUM_MSG_TYPE_MAX = 0x00ffffff,// uint最大值 Oxffffffff
 };
 
@@ -75,5 +78,6 @@ PDU* handleLoginRequest(PDU* pdu, QString& m_strName); // 处理登录请求并�
 PDU* handleOnlineUsersRequest();// 处理查询所有在线用户的请求
 PDU* handleSearchUserRequest(PDU* pdu); // 处理查找用户的请求
 PDU* handleAddFriendRequest(PDU* pdu);  // 处理添加好友请求
+PDU* handleFlushFriendRequest(PDU* pdu); // 刷新好友列表请求
 
 #endif // PROTOCOL_H

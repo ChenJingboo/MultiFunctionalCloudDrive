@@ -1,3 +1,9 @@
+/*
+ *
+ *
+ *
+*/
+
 #ifndef OPENWIDGET_H
 #define OPENWIDGET_H
 

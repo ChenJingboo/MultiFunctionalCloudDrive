@@ -211,6 +211,53 @@ int DBOperate::getIdByUserName(const char *name)
     }
 }
 
+QStringList DBOperate::handleFlushFriendRequest(const char *name)
+{
+
+    qDebug() << "Enter QStringList DBOperate::handleFlushFriendRequest(const char*)";
+
+    QStringList strFriendList;
+    strFriendList.clear(); // 清除内容
+
+    if (NULL == name)
+    {
+        return strFriendList;
+    }
+
+    // 获取请求方name对应的id
+    QString strQuery = QString("select id from userinfo where name = \'%1\' and online = 1 ").arg(name);
+    QSqlQuery query;
+    int iId = -1; // 请求方name对应的id
+    query.exec(strQuery);
+    if (query.next())
+    {
+        iId = query.value(0).toInt();
+    }
+
+    // 查询好友信息表与用户信息表获取好友列表
+    strQuery = QString("select name, online from userinfo "
+                       "where id in "
+                       "((select friendId from friendinfo "
+                       "where id = %1) "
+                       "union "
+                       "(select id from friendinfo "
+                       "where friendId = %2))").arg(iId).arg(iId);
+    query.exec(strQuery);
+    while(query.next())
+    {
+        char friName[32];
+        char friOnline[4];
+        strncpy(friName, query.value(0).toString().toStdString().c_str(), 32);
+        strncpy(friOnline, query.value(1).toString().toStdString().c_str(), 4);
+        strFriendList.append(friName);
+        strFriendList.append(friOnline);
+         qDebug() << "好友信息 " << friName << " " << friOnline;
+         qDebug() << strFriendList;
+    }
+
+    return strFriendList; // 返回查询到所有在线用户的姓名
+}
+
 DBOperate::~DBOperate()
 {
     m_db.close(); // 关闭数据库连接

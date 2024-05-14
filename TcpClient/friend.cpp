@@ -3,44 +3,6 @@
 
 Friend::Friend(QWidget *parent) : QWidget(parent)
 {
-//    m_pShowMsgTE = new QTextEdit;
-//    m_pFriendListwidget = new QListWidget;
-//    m_pInputMsgLE = new QLineEdit;
-
-//    m_pDelFriendPB = new QPushButton("删除好友");
-//    m_pFlushFriendPB = new QPushButton("刷新好友");
-//    m_pShowOnlineUsrPB = new QPushButton("显示在线");
-//    m_pSearchUsrPB = new QPushButton("查找用户");
-//    m_pMsgSendPB = new QPushButton("信息发送");
-//    m_pPrivateChatPB = new QPushButton("私聊");
-
-//    QVBoxLayout *pRightPBVBL = new QVBoxLayout;
-//    pRightPBVBL->addWidget(m_pDelFriendPB);
-//    pRightPBVBL->addWidget(m_pFlushFriendPB);
-//    pRightPBVBL->addWidget(m_pShowOnlineUsrPB);
-//    pRightPBVBL->addWidget(m_pSearchUsrPB);
-//    pRightPBVBL->addWidget(m_pMsgSendPB);
-//    pRightPBVBL->addWidget(m_pPrivateChatPB);
-
-//    QHBoxLayout* pTopHBL = new QHBoxLayout;
-//    pTopHBL->addWidget(m_pShowMsgTE);
-//    pTopHBL->addWidget(m_pFriendListwidget);
-//    pTopHBL->addLayout(pRightPBVBL) ;
-
-//    QHBoxLayout* pMsgHBL = new QHBoxLayout;
-//    pMsgHBL->addWidget(m_pInputMsgLE);
-//    pMsgHBL->addWidget(m_pMsgSendPB);
-
-//    m_pOnline = new Online;
-
-//    QVBoxLayout* pMain=new QVBoxLayout;
-//    pMain->addLayout(pTopHBL);
-//    pMain->addLayout(pMsgHBL);
-//    pMain->addWidget(m_pOnline);
-//    m_pOnline->hide();
-
-//    setLayout(pMain);
-
     m_pFriendListwidget = new QListWidget;
     m_pInputMsgLE = new QLineEdit;
     m_pShowMsgTE = new QTextEdit;
@@ -77,6 +39,9 @@ Friend::Friend(QWidget *parent) : QWidget(parent)
     // 绑定查找用户按钮与对应事件
     connect(m_pSearchUsrPB, SIGNAL(clicked(bool)),this, SLOT(searchUser()));
 
+    // 构造函数中绑定刷新好友列表按钮与对应事件
+    connect(m_pFlushFriendPB, SIGNAL(clicked(bool)), this, SLOT(flushFriendList()));
+
 }
 
 void Friend::showOnlineUser(PDU *pdu)
@@ -86,6 +51,33 @@ void Friend::showOnlineUser(PDU *pdu)
         return;
     }
     m_pOnline->showUser(pdu);
+}
+
+void Friend::updateFriendList(PDU *pdu){
+
+    qDebug() << "Enter void Friend::updateFriendList(PDU *pdu)";
+
+    if(NULL == pdu)
+    {
+        return ;
+    }
+    qDebug() << "pdu != NULL";
+
+    uint uiSize = pdu -> uiMsgLen / 36; // 注意是36，32 name + 4 online
+    char caName[32] = {'\0'};
+    char caOnline[4] = {'\0'};
+
+    m_pFriendListwidget -> clear(); // 清除好友列表原有数据
+
+    for(uint i = 0; i < uiSize; ++ i)
+    {
+        qDebug() << "Enter Friend::updateFriendList(PDU*)->for(uint i = 0; i < uiSize; ++ i)";
+        memcpy(caName, (char*)(pdu -> caMsg) + i * 36, 32);
+        memcpy(caOnline, (char*)(pdu -> caMsg) + 32 + i * 36, 4);
+         qDebug() << "客户端好友" << caName << " " << caOnline;
+        m_pFriendListwidget -> addItem(QString("%1\t%2").arg(caName)
+                               .arg(strcmp(caOnline, "1") == 0?"在线":"离线"));
+    }
 }
 
 QString Friend::getStrSearchName() const{
@@ -123,5 +115,20 @@ void Friend::searchUser(){
         free(pdu);
         pdu = NULL;
     }
+}
+
+void Friend::flushFriendList()
+{
+    qDebug() << "Enter Friend::flushFriendList()";
+
+    QString strName = TcpClient::getInstance().getStrName(); // 获取自己用户名
+    qDebug() << "自己的用户名是" << strName;
+
+    PDU* pdu = mkPDU(0);
+    pdu -> uiMsgType = ENUM_MSG_TYPE_FLSUH_FRIEND_REQUEST;
+    strncpy(pdu -> caData, strName.toStdString().c_str(), strName.size());
+    TcpClient::getInstance().getTcpSocket().write((char*)pdu, pdu -> uiPDULen);
+    free(pdu);
+    pdu = NULL;
 }
 
