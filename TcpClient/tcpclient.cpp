@@ -43,7 +43,7 @@ void TcpClient::recvMsg()
     // 根据不同消息类型，执行不同操作
     switch(pdu -> uiMsgType)
     {
-    case ENUM_MSG_TYPE_REGIST_RESPOND: // 注册请求
+    case ENUM_MSG_TYPE_REGIST_RESPOND: // 注册响应
     {
         if(0 == strcmp(pdu -> caData, REGIST_OK))
         {
@@ -55,10 +55,12 @@ void TcpClient::recvMsg()
         }
         break;
     }
-    case ENUM_MSG_TYPE_LOGIN_RESPOND: // 登录请求
+    case ENUM_MSG_TYPE_LOGIN_RESPOND: // 登录响应
     {
         if(0 == strcmp(pdu -> caData, LOGIN_OK))
         {
+            //默认请求一次好友列表
+//            OpenWidget::getInstance().getFriend()-> flushFriendList();
             char caName[32] = {'\0'};
             strncpy(caName, pdu -> caData + 32, 32); // 设置已登录用户名
             QMessageBox::information(this, "登录", LOGIN_OK);
