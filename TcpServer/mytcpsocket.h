@@ -18,6 +18,7 @@ public slots:
     void recvMsg(); // 槽函数，按照协议形式处理传输过来的数据
     void clientOffline();
 
+
 signals:
     void offline(MyTcpSocket *socket); // 通过信号传送给mytcpserver用户下线通知，然后附带参数socket地址方便删除
 

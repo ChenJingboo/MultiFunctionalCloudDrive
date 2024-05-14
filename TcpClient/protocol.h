@@ -19,6 +19,12 @@
 #define SEARCH_USER_OFFLINE "user offline"
 #define SEARCH_USER_EMPTY "no such people"
 
+#define ADD_FRIEND_OK "add friend ok"                    // 添加好友 1对方存在在线，0对方存在不在线，2不存在，3已是好友，4请求错误
+#define ADD_FRIEND_OFFLINE "added friend offline"
+#define ADD_FRIEND_EMPTY "no such people"
+#define ADD_FRIEND_EXIST "added friend already exist"
+
+#define UNKNOWN_ERROR "unknown error"                    // 通用未知错误
 
 //typedef <current_name> <new_name>
 typedef unsigned int uint;
@@ -52,6 +58,12 @@ enum ENUM_MSG_TYPE
 
     ENUM_MSG_TYPE_SEARCH_USER_REQUEST, // 搜索用户请求
     ENUM_MSG_TYPE_SEARCH_USER_RESPOND, // 搜索用户回复
+
+    ENUM_MSG_TYPE_ADD_FRIEND_REQUEST, // 添加好友请求
+    ENUM_MSG_TYPE_ADD_FRIEND_RESPOND, // 添加好友回复
+
+    ENUM_MSG_TYPE_ADD_FRIEND_AGREE,     // 被添加好友消息回复同意
+    ENUM_MSG_TYPE_ADD_FRIEND_REJECT,    // 被添加好友消息回复拒绝
 
     ENUM_MSG_TYPE_MAX = 0x00fffff, //uint最大值Oxffffffff
 };

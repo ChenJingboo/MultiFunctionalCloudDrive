@@ -14,6 +14,7 @@ public:
     MyTcpServer();
     static MyTcpServer& getInstance();
     void incomingConnection(qintptr handle) override;
+    bool forwardMsg(const QString caDesName, PDU *pdu); // 服务器转发给其他客户端消息
     ~MyTcpServer();
 
 public slots:

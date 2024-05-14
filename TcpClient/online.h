@@ -1,3 +1,7 @@
+/*
+ * 弹出框界面
+*/
+
 #ifndef ONLINE_H
 #define ONLINE_H
 
@@ -18,6 +22,9 @@ public:
     explicit Online(QWidget *parent = nullptr);
     void showUser(PDU* pdu);
     ~Online();
+
+private slots:
+    void on_pushButton_clicked();
 
 private:
     Ui::Online *ui;

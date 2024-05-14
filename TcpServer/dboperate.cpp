@@ -144,6 +144,73 @@ int DBOperate::handleSearchUser(const char *name)
     }
 }
 
+int DBOperate::handleAddFriend(const char *addedName, const char *sourceName)
+{
+    qDebug() << "Enter DBOperate::handleAddFriend(const char *addedName, const char *sourceName)";
+
+    if(NULL == addedName || NULL == sourceName)
+    {
+        return 4; // 请求错误
+    }
+    QString strQuery = QString("select * from friendinfo "
+                               "where (id = (select id from userinfo where name = \'%1\') and "
+                               "friendId = (select id from userinfo where name = \'%2\')) or "  // 好友是双向的，数据库只存了单向，注意是or关系
+                               "(id = (select id from userinfo where name = \'%3\') and "
+                               "friendId = (select id from userinfo where name = \'%4\'))")
+            .arg(sourceName).arg(addedName).arg(addedName).arg(sourceName);
+    qDebug() << strQuery;
+    QSqlQuery query;
+    query.exec(strQuery);
+    if(query.next())
+    {
+        return 3; // 双方已经是好友
+    }
+    else // 不是好友
+    {
+        return handleSearchUser(addedName); // 查询对方，存在并在线返回1，存在不在线返回0，不存在该用户返回2
+    }
+}
+
+bool DBOperate::handleAddFriendAgree(const char *addedName, const char *sourceName){
+    if(NULL == addedName || NULL == sourceName)
+    {
+        qDebug() << "handleAddFriendAgree: name is NULL";
+        return false;
+    }
+
+    int sourceUserId = -1, addedUserId = -1;
+    // 查找用户对应id
+    addedUserId = getIdByUserName(addedName);
+    sourceUserId = getIdByUserName(sourceName);
+
+    QString strQuery = QString("insert into friendinfo values(%1, %2) ").arg(sourceUserId).arg(addedUserId);
+    QSqlQuery query;
+
+    qDebug() << "handleAddFriendAgree " << strQuery;
+
+    return query.exec(strQuery);
+}
+
+int DBOperate::getIdByUserName(const char *name)
+{
+    if(NULL == name)
+    {
+        return -1;
+    }
+    QString strQuery = QString("select id from userinfo where name = \'%1\' ").arg(name);
+    QSqlQuery query;
+
+    query.exec(strQuery);
+    if(query.next())
+    {
+        return query.value(0).toInt();
+    }
+    else
+    {
+        return -1; // 不存在该用户
+    }
+}
+
 DBOperate::~DBOperate()
 {
     m_db.close(); // 关闭数据库连接

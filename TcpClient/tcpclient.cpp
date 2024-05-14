@@ -96,6 +96,38 @@ void TcpClient::recvMsg()
         }
         break;
     }
+    case ENUM_MSG_TYPE_ADD_FRIEND_REQUEST: // 处理服务器转发过来的好友请求消息
+    {
+        char sourceName[32]; // 获取发送方用户名
+        strncpy(sourceName, pdu -> caData + 32, 32);
+        int ret = QMessageBox::information(this, "好友申请", QString("%1 想添加您为好友，是否同意？").arg(sourceName),
+                                 QMessageBox::Yes, QMessageBox::No); // 后面两个参数是为QMessage默认支持两个按钮来设置枚举值
+        PDU* resPdu = mkPDU(0);
+
+        strncpy(resPdu -> caData, pdu -> caData, 32); // 被加好友者用户名
+        strncpy(resPdu -> caData + 32, pdu -> caData + 32, 32); // 加好友者用户名
+        // qDebug() << "同意加好友吗？" << resPdu -> caData << " " << resPdu -> caData + 32;
+        if(ret == QMessageBox::Yes) // 同意加好友
+        {
+            resPdu->uiMsgType = ENUM_MSG_TYPE_ADD_FRIEND_AGREE;
+        }
+        else
+        {
+            resPdu->uiMsgType = ENUM_MSG_TYPE_ADD_FRIEND_REJECT;
+        }
+        m_tcpSocket.write((char*)resPdu, resPdu -> uiPDULen); // 发送给服务器消息，由服务器写入数据库并转发给用户
+        break;
+    }
+    case ENUM_MSG_TYPE_ADD_FRIEND_AGREE: // 对方同意加好友
+    {
+        QMessageBox::information(this, "添加好友", QString("%1 已同意您的好友申请！").arg(pdu -> caData));
+        break;
+    }
+    case ENUM_MSG_TYPE_ADD_FRIEND_REJECT: // 对方拒绝加好友
+    {
+        QMessageBox::information(this, "添加好友", QString("%1 已拒绝您的好友申请！").arg(pdu -> caData));
+        break;
+    }
     default:
         break;
     }

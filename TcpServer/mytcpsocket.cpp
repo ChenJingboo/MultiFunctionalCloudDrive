@@ -1,4 +1,6 @@
 #include "mytcpsocket.h"
+#include "mytcpserver.h"
+#include "dboperate.h"
 
 MyTcpSocket::MyTcpSocket()
 {
@@ -63,6 +65,32 @@ void MyTcpSocket::recvMsg()
     // 释放空间
     free(pdu);
     pdu = NULL;
+}
+
+// 同意加好友
+void handleAddFriendAgree(PDU* pdu)
+{
+    char addedName[32] = {'\0'};
+    char sourceName[32] = {'\0'};
+    // 拷贝读取的信息
+    strncpy(addedName, pdu -> caData, 32);
+    strncpy(sourceName, pdu -> caData + 32, 32);
+
+    // 将新的好友关系信息写入数据库
+    DBOperate::getInstance().handleAddFriendAgree(addedName, sourceName);
+
+    // 服务器需要转发给发送好友请求方其被同意的消息
+    MyTcpServer::getInstance().forwardMsg(sourceName, pdu);
+}
+
+// 拒绝加好友
+void handleAddFriendReject(PDU* pdu)
+{
+    char sourceName[32] = {'\0'};
+    // 拷贝读取的信息
+    strncpy(sourceName, pdu -> caData + 32, 32);
+    // 服务器需要转发给发送好友请求方其被拒绝的消息
+    MyTcpServer::getInstance().forwardMsg(sourceName, pdu);
 }
 
 void MyTcpSocket::clientOffline()
