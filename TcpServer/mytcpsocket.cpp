@@ -12,6 +12,32 @@ MyTcpSocket::MyTcpSocket()
 
 }
 
+// 同意加好友
+void handleAddFriendAgree(PDU* pdu)
+{
+    char addedName[32] = {'\0'};
+    char sourceName[32] = {'\0'};
+    // 拷贝读取的信息
+    strncpy(addedName, pdu -> caData, 32);
+    strncpy(sourceName, pdu -> caData + 32, 32);
+
+    // 将新的好友关系信息写入数据库
+    DBOperate::getInstance().handleAddFriendAgree(addedName, sourceName);
+
+    // 服务器需要转发给发送好友请求方其被同意的消息
+    MyTcpServer::getInstance().forwardMsg(sourceName, pdu);
+}
+
+// 拒绝加好友
+void handleAddFriendReject(PDU* pdu)
+{
+    char sourceName[32] = {'\0'};
+    // 拷贝读取的信息
+    strncpy(sourceName, pdu -> caData + 32, 32);
+    // 服务器需要转发给发送好友请求方其被拒绝的消息
+    MyTcpServer::getInstance().forwardMsg(sourceName, pdu);
+}
+
 void MyTcpSocket::recvMsg()
 {
     qDebug() << this -> bytesAvailable(); // 输出接收到的数据大小
@@ -49,6 +75,22 @@ void MyTcpSocket::recvMsg()
             resPdu = handleSearchUserRequest(pdu);
             break;
         }
+        case ENUM_MSG_TYPE_ADD_FRIEND_REQUEST: // 添加好友请求
+        {
+            qDebug() << "Accept case ENUM_MSG_TYPE_ADD_FRIEND_REQUEST";
+            resPdu = handleAddFriendRequest(pdu);
+            break;
+        }
+        case ENUM_MSG_TYPE_ADD_FRIEND_AGREE: // 同意加好友
+        {
+            handleAddFriendAgree(pdu);
+            break;
+        }
+        case ENUM_MSG_TYPE_ADD_FRIEND_REJECT: // 拒绝加好友
+        {
+            handleAddFriendReject(pdu);
+            break;
+        }
         case ENUM_MSG_TYPE_FLSUH_FRIEND_REQUEST: // 刷新好友请求
         {
             qDebug() << "Accept case ENUM_MSG_TYPE_SEARCH_USER_REQUEST" ;
@@ -76,32 +118,6 @@ void MyTcpSocket::recvMsg()
     // 释放空间
     free(pdu);
     pdu = NULL;
-}
-
-// 同意加好友
-void handleAddFriendAgree(PDU* pdu)
-{
-    char addedName[32] = {'\0'};
-    char sourceName[32] = {'\0'};
-    // 拷贝读取的信息
-    strncpy(addedName, pdu -> caData, 32);
-    strncpy(sourceName, pdu -> caData + 32, 32);
-
-    // 将新的好友关系信息写入数据库
-    DBOperate::getInstance().handleAddFriendAgree(addedName, sourceName);
-
-    // 服务器需要转发给发送好友请求方其被同意的消息
-    MyTcpServer::getInstance().forwardMsg(sourceName, pdu);
-}
-
-// 拒绝加好友
-void handleAddFriendReject(PDU* pdu)
-{
-    char sourceName[32] = {'\0'};
-    // 拷贝读取的信息
-    strncpy(sourceName, pdu -> caData + 32, 32);
-    // 服务器需要转发给发送好友请求方其被拒绝的消息
-    MyTcpServer::getInstance().forwardMsg(sourceName, pdu);
 }
 
 void MyTcpSocket::clientOffline()
