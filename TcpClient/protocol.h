@@ -24,6 +24,9 @@
 #define ADD_FRIEND_EMPTY "no such people"
 #define ADD_FRIEND_EXIST "added friend already exist"
 
+#define DEL_FRIEND_OK "delete friend ok"                 // 删除好友
+#define DEL_FRIEND_FAILED "delete friend failed"
+
 #define UNKNOWN_ERROR "unknown error"                    // 通用未知错误
 
 //typedef <current_name> <new_name>
@@ -67,6 +70,9 @@ enum ENUM_MSG_TYPE
 
     ENUM_MSG_TYPE_FLSUH_FRIEND_REQUEST, // 刷新好友请求
     ENUM_MSG_TYPE_FLUSH_FRIEND_RESPOND, // 刷新好友响应
+
+    ENUM_MSG_TYPE_DELETE_FRIEND_REQUEST, // 删除好友请求
+    ENUM_MSG_TYPE_DELETE_FRIEND_RESPOND, // 删除好友响应
 
     ENUM_MSG_TYPE_MAX = 0x00fffff, //uint最大值Oxffffffff
 };

@@ -28,6 +28,9 @@
 #define ADD_FRIEND_EMPTY "no such people"
 #define ADD_FRIEND_EXIST "added friend already exist"
 
+#define DEL_FRIEND_OK "delete friend ok"                 // 删除好友
+#define DEL_FRIEND_FAILED "delete friend failed"
+
 #define UNKNOWN_ERROR "unknown error"                    // 通用未知错误
 
 //typedef <current_name> <new_name>
@@ -58,6 +61,9 @@ enum ENUM_MSG_TYPE
     ENUM_MSG_TYPE_FLSUH_FRIEND_REQUEST, // 刷新好友请求
     ENUM_MSG_TYPE_FLUSH_FRIEND_RESPOND, // 刷新好友响应
 
+    ENUM_MSG_TYPE_DELETE_FRIEND_REQUEST, // 删除好友请求
+    ENUM_MSG_TYPE_DELETE_FRIEND_RESPOND, // 删除好友响应
+
     ENUM_MSG_TYPE_MAX = 0x00ffffff,// uint最大值 Oxffffffff
 };
 
@@ -79,5 +85,6 @@ PDU* handleOnlineUsersRequest();// 处理查询所有在线用户的请求
 PDU* handleSearchUserRequest(PDU* pdu); // 处理查找用户的请求
 PDU* handleAddFriendRequest(PDU* pdu);  // 处理添加好友请求
 PDU* handleFlushFriendRequest(PDU* pdu); // 刷新好友列表请求
+PDU* handleDeleteFriendRequest(PDU* pdu); // 删除好友请求
 
 #endif // PROTOCOL_H

@@ -55,6 +55,11 @@ void MyTcpSocket::recvMsg()
             resPdu = handleFlushFriendRequest(pdu);
             break;
         }
+        case ENUM_MSG_TYPE_DELETE_FRIEND_REQUEST: // 删除好友请求
+        {
+            resPdu = handleDeleteFriendRequest(pdu);
+            break;
+        }
         default:
             break;
     }

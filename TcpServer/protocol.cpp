@@ -197,3 +197,32 @@ PDU* handleFlushFriendRequest(PDU* pdu){
 
     return resPdu;
 }
+
+PDU* handleDeleteFriendRequest(PDU* pdu){
+
+    qDebug() << "Enter PDU* handleDeleteFriendRequest(PDU* pdu)";
+
+    char deletedName[32] = {'\0'};
+    char sourceName[32] = {'\0'};
+    // 拷贝读取的信息
+    strncpy(deletedName, pdu -> caData, 32);
+    strncpy(sourceName, pdu -> caData + 32, 32);
+    bool ret = DBOperate::getInstance().handleDeleteFriend(deletedName, sourceName);
+
+    // 给请求删除方消息提示，以返回值形式
+    PDU *resPdu = mkPDU(0);
+    resPdu -> uiMsgType = ENUM_MSG_TYPE_DELETE_FRIEND_RESPOND;
+    if(ret)
+    {
+        strncpy(resPdu -> caData, DEL_FRIEND_OK, 32);
+    }
+    else
+    {
+        strncpy(resPdu -> caData, DEL_FRIEND_FAILED, 32);
+    }
+
+    // 给被删除方消息提示，如果在线的话
+    MyTcpServer::getInstance().forwardMsg(deletedName, pdu);
+
+    return resPdu;
+}
