@@ -61,9 +61,8 @@ void Friend::updateFriendList(PDU *pdu){
     {
         return ;
     }
-    qDebug() << "pdu != NULL";
 
-    uint uiSize = pdu -> uiMsgLen / 36; // 注意是36，32 name + 4 online
+    uint uiSize = (pdu -> uiMsgLen) / 36; // 注意是36，32 name + 4 online
     char caName[32] = {'\0'};
     char caOnline[4] = {'\0'};
 
@@ -71,10 +70,10 @@ void Friend::updateFriendList(PDU *pdu){
 
     for(uint i = 0; i < uiSize; ++ i)
     {
-        qDebug() << "Enter Friend::updateFriendList(PDU*)->for(uint i = 0; i < uiSize; ++ i)";
         memcpy(caName, (char*)(pdu -> caMsg) + i * 36, 32);
         memcpy(caOnline, (char*)(pdu -> caMsg) + 32 + i * 36, 4);
-         qDebug() << "客户端好友" << caName << " " << caOnline;
+        //无法接收到更新状态
+        qDebug() << "客户端好友" << caName << " 在线状态" << caOnline;
         m_pFriendListwidget -> addItem(QString("%1\t%2").arg(caName)
                                .arg(strcmp(caOnline, "1") == 0?"在线":"离线"));
     }
