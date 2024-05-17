@@ -147,6 +147,29 @@ void TcpClient::recvMsg()
         QMessageBox::information(this, "删除好友", QString("%1 已删除与您的好友关系！").arg(sourceName));
         break;
     }
+    case ENUM_MSG_TYPE_PRIVATE_CHAT_REQUEST: // 私聊好友消息请求（接收消息）
+    {
+        qDebug() << "Enter case ENUM_MSG_TYPE_PRIVATE_CHAT_REQUEST";
+
+        char sourceName[32]; // 获取发送方用户名
+        strncpy(sourceName, pdu -> caData + 32, 32);
+        privateChatWid *priChatW = OpenWidget::getInstance().getFriend()->searchPriChatWid(sourceName);
+        if(NULL == priChatW)
+        {
+            priChatW = new privateChatWid;
+            priChatW -> setStrChatName(sourceName);
+            priChatW -> setStrLoginName(m_strName);
+            priChatW -> setPriChatTitle(sourceName);
+            OpenWidget::getInstance().getFriend()->insertPriChatWidList(priChatW);
+        }
+        priChatW->updateShowMsgTE(pdu);
+        priChatW->show();
+        if(priChatW->isMinimized()) // 如果窗口被最小化了
+        {
+            priChatW->showNormal();
+        }
+        break;
+    }
     default:
         break;
     }

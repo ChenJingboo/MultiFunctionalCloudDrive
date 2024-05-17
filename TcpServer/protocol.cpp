@@ -226,3 +226,32 @@ PDU* handleDeleteFriendRequest(PDU* pdu){
 
     return resPdu;
 }
+
+// 私聊发送消息请求
+PDU* handlePrivateChatRequest(PDU* pdu)
+{
+    qDebug() << "Enter PDU* handlePrivateChatRequest(PDU* pdu)";
+
+    char chatedName[32] = {'\0'};
+    char sourceName[32] = {'\0'};
+    // 拷贝读取的信息
+    strncpy(chatedName, pdu -> caData, 32);
+    strncpy(sourceName, pdu -> caData + 32, 32);
+    qDebug() << "handlePrivateChatRequest  " << chatedName << " " << sourceName;
+
+    PDU* resPdu = NULL;
+
+    // 转发给对方消息  0对方存在不在线，1对方存在在线
+    bool ret = MyTcpServer::getInstance().forwardMsg(chatedName, pdu);
+
+    // 发送失败则给发送者消息
+    if(!ret)// 0对方不在线
+    {
+        qDebug() << "对方不在线";
+        resPdu = mkPDU(0);
+        resPdu -> uiMsgType = ENUM_MSG_TYPE_PRIVATE_CHAT_RESPOND;
+        strcpy(resPdu -> caData, PRIVATE_CHAT_OFFLINE);
+    }
+
+    return resPdu;
+}

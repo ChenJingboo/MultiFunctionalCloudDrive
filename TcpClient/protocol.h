@@ -29,6 +29,8 @@
 
 #define UNKNOWN_ERROR "unknown error"                    // 通用未知错误
 
+#define PRIVATE_CHAT_OFFLINE "the friend offline"        // 私聊好友
+
 //typedef <current_name> <new_name>
 typedef unsigned int uint;
 
@@ -73,6 +75,12 @@ enum ENUM_MSG_TYPE
 
     ENUM_MSG_TYPE_DELETE_FRIEND_REQUEST, // 删除好友请求
     ENUM_MSG_TYPE_DELETE_FRIEND_RESPOND, // 删除好友响应
+
+    ENUM_MSG_TYPE_PRIVATE_CHAT_REQUEST, // 私聊请求
+    ENUM_MSG_TYPE_PRIVATE_CHAT_RESPOND, // 私聊回复
+
+    ENUM_MSG_TYPE_GROUP_CHAT_REQUEST, // 群聊请求
+    ENUM_MSG_TYPE_GROUP_CHAT_RESPOND, // 群聊回复
 
     ENUM_MSG_TYPE_MAX = 0x00fffff, //uint最大值Oxffffffff
 };

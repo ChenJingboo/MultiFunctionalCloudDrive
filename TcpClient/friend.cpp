@@ -45,6 +45,9 @@ Friend::Friend(QWidget *parent) : QWidget(parent)
     // 绑定删除好友与对应事件
     connect(m_pDelFriendPB, SIGNAL(clicked(bool)), this,  SLOT(deleteFriend()));
 
+    // 绑定私聊好友与对应事件
+    connect(m_pPrivateChatPB, SIGNAL(clicked(bool)), this, SLOT(privateChat()));
+
 }
 
 void Friend::showOnlineUser(PDU *pdu)
@@ -153,5 +156,62 @@ void Friend::deleteFriend()
     TcpClient::getInstance().getTcpSocket().write((char*)pdu, pdu -> uiPDULen);
     free(pdu);
     pdu = NULL;
+}
+
+// 获得对应用户名的私聊窗口
+privateChatWid* Friend::searchPriChatWid(const char* chatName){
+
+    qDebug() << "privateChatWid* Friend::searchPriChatWid(const char* chatName)";
+
+    for (privateChatWid *ptr:m_priChatWidList)
+    {
+        if(ptr->strChatName() == chatName)
+        {
+            return ptr;
+        }
+    }
+    return NULL;
+}
+
+void Friend::insertPriChatWidList(privateChatWid *priChat)
+{
+    m_priChatWidList.append(priChat);
+}
+
+void Friend::privateChat()
+{
+    qDebug() << "Enter Friend::privateChat()";
+
+    if(NULL == m_pFriendListwidget -> currentItem()) // 如果没有选中好友
+    {
+        return ;
+    }
+    QString friName = m_pFriendListwidget -> currentItem() -> text(); // 获得选中的好友用户名
+    friName = friName.split("\t")[0];
+    QString loginName = TcpClient::getInstance().getStrName(); // 登录用户用户名
+    qDebug() << "选中的好友姓名是：" << friName;
+
+    //这个私聊窗口是好友的私聊窗口吗还是
+    privateChatWid *priChat = searchPriChatWid(friName.toStdString().c_str());
+
+    if(priChat == NULL) // 没找到该窗口，说明之前没有创建私聊窗口
+    {
+        qDebug() << "未找到窗口";
+        priChat = new privateChatWid;
+        priChat -> setStrChatName(friName);
+        priChat -> setStrLoginName(loginName);
+        priChat -> setPriChatTitle(friName.toStdString().c_str());
+        m_priChatWidList.append(priChat); // 添加入该客户端私聊List
+    }
+    if(priChat->isHidden()) // 如果窗口被隐藏，则让其显示
+    {
+        qDebug() << "窗口被隐藏了";
+        priChat->show();
+    }
+    if(priChat -> isMinimized()) // 如果窗口被最小化了
+    {
+        qDebug() << "窗口被最小化了";
+        priChat->showNormal();
+    }
 }
 

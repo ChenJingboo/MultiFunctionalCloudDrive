@@ -102,6 +102,11 @@ void MyTcpSocket::recvMsg()
             resPdu = handleDeleteFriendRequest(pdu);
             break;
         }
+        case ENUM_MSG_TYPE_PRIVATE_CHAT_REQUEST: // 私聊请求
+        {
+            resPdu = handlePrivateChatRequest(pdu);
+            break;
+        }
         default:
             break;
     }

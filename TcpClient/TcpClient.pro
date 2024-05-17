@@ -21,6 +21,7 @@ SOURCES += \
     main.cpp \
     online.cpp \
     openwidget.cpp \
+    privatechatwid.cpp \
     protocol.cpp \
     tcpclient.cpp
 
@@ -29,11 +30,13 @@ HEADERS += \
     friend.h \
     online.h \
     openwidget.h \
+    privatechatwid.h \
     protocol.h \
     tcpclient.h
 
 FORMS += \
     online.ui \
+    privatechatwid.ui \
     tcpclient.ui
 
 # Default rules for deployment.
