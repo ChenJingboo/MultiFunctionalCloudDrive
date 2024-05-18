@@ -288,3 +288,40 @@ PDU* handlePrivateChatRequest(PDU* pdu)
 
     return resPdu;
 }
+
+// 创建文件夹请求处理
+PDU* handleCreateDirRequest(PDU* pdu)
+{
+
+    qDebug() << "Enter PDU* handleCreateDirRequest(PDU* pdu)";
+
+    char caDirName[32];
+    char caCurPath[pdu -> uiMsgLen];
+    strncpy(caDirName, pdu -> caData, 32);
+    strncpy(caCurPath, (char*)pdu -> caMsg, pdu -> uiMsgLen);
+
+    QString strDir = QString("%1/%2").arg(caCurPath).arg(caDirName);
+    QDir dir;
+    PDU *resPdu = mkPDU(0);
+    resPdu -> uiMsgType = ENUM_MSG_TYPE_CREATE_DIR_RESPOND;
+
+    qDebug() << "创建文件夹：" << strDir;
+    if(dir.exists(caCurPath)) // 路径存在
+    {
+        if(dir.exists(strDir)) // 文件夹已经存在
+        {
+            strncpy(resPdu -> caData, CREATE_DIR_EXIST, 32);
+        }
+        else
+        {
+            dir.mkdir(strDir); // 创建文件夹
+            strncpy(resPdu -> caData, CREATE_DIR_OK, 32);
+        }
+    }
+    else // 路径不存在
+    {
+        strncpy(resPdu -> caData, PATH_NOT_EXIST, 32);
+    }
+
+    return resPdu;
+}

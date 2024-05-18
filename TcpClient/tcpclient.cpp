@@ -306,6 +306,16 @@ QString TcpClient::getStrName() const
     return m_strName;
 }
 
+QString TcpClient::getStrCurPath() const
+{
+    return m_strCurPath;
+}
+
+void TcpClient::setStrCurPath(const QString &strCurPath)
+{
+    m_strCurPath = strCurPath;
+}
+
 void TcpClient::on_pushButton_logout_clicked()
 {
 

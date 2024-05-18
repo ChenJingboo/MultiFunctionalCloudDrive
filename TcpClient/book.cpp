@@ -1,4 +1,6 @@
 #include "book.h"
+#include "tcpclient.h"
+#include <QInputDialog>
 
 Book::Book(QWidget *parent) : QWidget(parent)
 {
@@ -36,4 +38,30 @@ Book::Book(QWidget *parent) : QWidget(parent)
     pMainVBL -> addWidget(m_pFileListW);
 
     setLayout(pMainVBL);
+
+    //连接按钮及其创建文件夹函数
+    connect(m_pCreateDirPB, SIGNAL(clicked(bool)), this, SLOT(createDir()));
+
+}
+
+void Book::createDir()
+{
+    qDebug() << "Enter void Book::createDir()";
+
+    QString strDirName = QInputDialog::getText(this, "新建文件夹", "文件夹名："); // 获得文件夹名
+    QString strCurPath = TcpClient::getInstance().getStrCurPath();
+
+    if(strDirName.isEmpty())
+    {
+        QMessageBox::warning(this, "新建文件夹", "文件夹名字不能为空！");
+        return ;
+    }
+    PDU *pdu = mkPDU(strCurPath.size() + 1);
+    pdu -> uiMsgType = ENUM_MSG_TYPE_CREATE_DIR_REQUEST;
+    strncpy(pdu -> caData, strDirName.toStdString().c_str(), strDirName.size());
+    memcpy((char*)pdu ->caMsg, strCurPath.toStdString().c_str(), strCurPath.size());
+    TcpClient::getInstance().getTcpSocket().write((char*)pdu, pdu -> uiPDULen);
+
+    free(pdu);
+    pdu = NULL;
 }

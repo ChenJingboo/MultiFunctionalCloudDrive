@@ -15,6 +15,9 @@ public:
 
 signals:
 
+public slots:
+    void createDir();               // 创建文件夹
+
 private:
     QListWidget *m_pFileListW;      // 文件列表，显示所有文件
 

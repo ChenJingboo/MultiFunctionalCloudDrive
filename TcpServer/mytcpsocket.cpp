@@ -107,6 +107,11 @@ void MyTcpSocket::recvMsg()
             resPdu = handlePrivateChatRequest(pdu);
             break;
         }
+        case ENUM_MSG_TYPE_CREATE_DIR_REQUEST: // 创建文件夹请求
+        {
+            resPdu = handleCreateDirRequest(pdu);
+            break;
+        }
         default:
             break;
     }

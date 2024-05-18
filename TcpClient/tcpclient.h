@@ -26,8 +26,13 @@ public:
     void loadConfig(); // 加载配置文件信息
     void sendText();
     static TcpClient& getInstance();
+
+    QString getStrCurPath() const;
+    void setStrCurPath(const QString &strCurPath);
+
     QTcpSocket& getTcpSocket();
     QString getStrName() const;
+
     ~TcpClient();
 
 public slots:

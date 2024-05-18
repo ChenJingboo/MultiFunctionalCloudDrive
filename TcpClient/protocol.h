@@ -31,6 +31,11 @@
 
 #define PRIVATE_CHAT_OFFLINE "the friend offline"        // 私聊好友
 
+// 文件操作
+#define PATH_NOT_EXIST "path does not exist"             // 文件路径不存在
+#define CREATE_DIR_OK "create dir ok"                    // 新建文件夹
+#define CREATE_DIR_EXIST "created dir already exist"     // 文件路径已存在
+
 //typedef <current_name> <new_name>
 typedef unsigned int uint;
 
@@ -81,6 +86,10 @@ enum ENUM_MSG_TYPE
 
     ENUM_MSG_TYPE_GROUP_CHAT_REQUEST, // 群聊请求
     ENUM_MSG_TYPE_GROUP_CHAT_RESPOND, // 群聊回复
+
+    // 文件操作
+    ENUM_MSG_TYPE_CREATE_DIR_REQUEST, // 新建文件夹请求
+    ENUM_MSG_TYPE_CREATE_DIR_RESPOND, // 新建文件夹回复
 
     ENUM_MSG_TYPE_MAX = 0x00fffff, //uint最大值Oxffffffff
 };

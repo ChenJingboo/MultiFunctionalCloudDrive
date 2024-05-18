@@ -35,6 +35,11 @@
 
 #define PRIVATE_CHAT_OFFLINE "the friend offline"        // 私聊好友
 
+// 文件操作
+#define PATH_NOT_EXIST "path does not exist"             // 文件路径不存在
+#define CREATE_DIR_OK "create dir ok"                    // 新建文件夹
+#define CREATE_DIR_EXIST "created dir already exist"
+
 //typedef <current_name> <new_name>
 typedef unsigned int uint;
 
@@ -72,6 +77,10 @@ enum ENUM_MSG_TYPE
     ENUM_MSG_TYPE_GROUP_CHAT_REQUEST, // 群聊请求
     ENUM_MSG_TYPE_GROUP_CHAT_RESPOND, // 群聊回复
 
+    // 文件操作
+    ENUM_MSG_TYPE_CREATE_DIR_REQUEST, // 新建文件夹请求
+    ENUM_MSG_TYPE_CREATE_DIR_RESPOND, // 新建文件夹回复
+
     ENUM_MSG_TYPE_MAX = 0x00ffffff,// uint最大值 Oxffffffff
 };
 
@@ -89,11 +98,12 @@ struct PDU
 PDU *mkPDU(uint uiMsgLen); // 创建PDU，uiMsglen是可变的，总大小可有其计算得到
 PDU* handleRegistRequest(PDU* pdu); // 处理注册请求并返回响应PDU
 PDU* handleLoginRequest(PDU* pdu, QString& m_strName); // 处理登录请求并返回响应PDU
-PDU* handleOnlineUsersRequest();// 处理查询所有在线用户的请求
-PDU* handleSearchUserRequest(PDU* pdu); // 处理查找用户的请求
-PDU* handleAddFriendRequest(PDU* pdu);  // 处理添加好友请求
-PDU* handleFlushFriendRequest(PDU* pdu); // 刷新好友列表请求
-PDU* handleDeleteFriendRequest(PDU* pdu); // 删除好友请求
-PDU* handlePrivateChatRequest(PDU* pdu); // 私聊发送消息请求
+PDU* handleOnlineUsersRequest();            // 处理查询所有在线用户的请求
+PDU* handleSearchUserRequest(PDU* pdu);     // 处理查找用户的请求
+PDU* handleAddFriendRequest(PDU* pdu);      // 处理添加好友请求
+PDU* handleFlushFriendRequest(PDU* pdu);    // 刷新好友列表请求
+PDU* handleDeleteFriendRequest(PDU* pdu);   // 删除好友请求
+PDU* handlePrivateChatRequest(PDU* pdu);    // 私聊发送消息请求
+PDU* handleCreateDirRequest(PDU* pdu);      // 创建文件夹请求处理
 
 #endif // PROTOCOL_H
