@@ -30,8 +30,6 @@ private:
 
     QPushButton *m_pMoveFilePB;     // 移动文件
     QPushButton *m_pMoveDesDirDB;   // 移动目标目录
-
-    //测试一下同步
 };
 
 #endif // BOOK_H
