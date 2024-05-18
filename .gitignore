@@ -2,5 +2,6 @@
 *.txt
 # 忽略所有以build开头的目录
 build*/
-# 忽略所有的.user文件
-*.user
+# 忽略.user文件
+TcpClient/TcpClient.pro.user
+TcpServer/TcpServer.pro.user

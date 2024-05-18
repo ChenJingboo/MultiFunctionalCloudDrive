@@ -5,6 +5,10 @@
 OpenWidget::OpenWidget(QWidget *parent) : QWidget(parent)
 {
     m_pListW = new QListWidget(this);
+
+    //新添加的
+    m_pUserLabel = new QLabel;
+
     m_pListW->addItem("好友");
     m_pListW->addItem("图书");
 
@@ -15,11 +19,15 @@ OpenWidget::OpenWidget(QWidget *parent) : QWidget(parent)
     m_pSw->addWidget(m_pFriend);
     m_pSw->addWidget(m_pBook);
 
-    QHBoxLayout* pMain = new QHBoxLayout;
-    pMain->addWidget(m_pListW);
-    pMain->addWidget(m_pSw);
+    //新添加的
+    QHBoxLayout* pBodyHBL = new QHBoxLayout;
+    pBodyHBL->addWidget(m_pListW);
+    pBodyHBL->addWidget(m_pSw);
 
-    setLayout(pMain);
+    QVBoxLayout *pMainVBL = new QVBoxLayout;
+    pMainVBL -> addWidget(m_pUserLabel);
+    pMainVBL -> addLayout(pBodyHBL);
+    setLayout(pMainVBL);
 
     connect(m_pListW, SIGNAL(currentRowChanged(int))
             , m_pSw, SLOT(setCurrentIndex(int)));
@@ -35,4 +43,9 @@ OpenWidget &OpenWidget::getInstance()
 {
     static OpenWidget instance;
     return instance;
+}
+
+void OpenWidget::setUserLabel(const char *name)
+{
+    m_pUserLabel->setText(name);
 }

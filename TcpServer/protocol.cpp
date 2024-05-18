@@ -21,29 +21,6 @@ PDU *mkPDU(uint uiMsgLen)
 // 处理注册请求并返回响应PDU
 PDU* handleRegistRequest(PDU* pdu)
 {
-//    char caName[32] = {'\0'};
-//    char caPwd[32] = {'\0'};
-//    // 拷贝读取的信息
-//    strncpy(caName, pdu -> caData, 32);
-//    strncpy(caPwd, pdu -> caData + 32, 32);
-//    qDebug() << pdu -> uiMsgType << " " << caName << " " << caPwd;
-//    bool ret = DBOperate::getInstance().handleRegist(caName, caPwd); // 处理请求，插入数据库
-
-//    // 响应客户端
-//    PDU *resPdu = mkPDU(0); // 响应消息
-//    resPdu -> uiMsgType = ENUM_MSG_TYPE_REGIST_RESPOND;
-//    if(ret)
-//    {
-//        strcpy(resPdu -> caData, REGIST_OK);
-//    }
-//    else
-//    {
-//        strcpy(resPdu -> caData, REGIST_FAILED);
-//    }
-//    // qDebug() << resPdu -> uiMsgType << " " << resPdu ->caData;
-
-//    return resPdu;
-
     qDebug() << "Enter PDU* handleRegistRequest(PDU* pdu)";
 
     char caName[32] = {'\0'};
@@ -83,22 +60,49 @@ PDU* handleLoginRequest(PDU* pdu, QString& m_strName)
     qDebug() << pdu -> uiMsgType << " " << caName << " " << caPwd;
     bool ret = DBOperate::getInstance().handleLogin(caName, caPwd); // 处理请求，插入数据库
 
-    // 响应客户端
-    PDU *resPdu = mkPDU(0); // 响应消息
-    resPdu -> uiMsgType = ENUM_MSG_TYPE_LOGIN_RESPOND;
-    if(ret)
-    {
-        memcpy(resPdu -> caData, LOGIN_OK, 32);
-        memcpy(resPdu -> caData + 32, caName, 32); // 将登录后的用户名传回，便于tcpclient确认已经登陆的用户名
-        m_strName = caName;
-    }
-    else
-    {
-        strcpy(resPdu -> caData, LOGIN_FAILED);
-    }
-    // qDebug() << resPdu -> uiMsgType << " " << resPdu ->caData;
+//    // 响应客户端
+//    PDU *resPdu = mkPDU(0); // 响应消息
+//    resPdu -> uiMsgType = ENUM_MSG_TYPE_LOGIN_RESPOND;
+//    if(ret)
+//    {
+//        memcpy(resPdu -> caData, LOGIN_OK, 32);
+//        memcpy(resPdu -> caData + 32, caName, 32); // 将登录后的用户名传回，便于tcpclient确认已经登陆的用户名
+//        m_strName = caName;
+//    }
+//    else
+//    {
+//        strcpy(resPdu -> caData, LOGIN_FAILED);
+//    }
+//    // qDebug() << resPdu -> uiMsgType << " " << resPdu ->caData;
 
-    return resPdu;
+//    return resPdu;
+
+    // 响应客户端
+        PDU *resPdu = NULL; // 响应消息
+        if(ret)
+        {
+            QString strUserRootPath = QString("%1/%2")
+                    .arg(MyTcpServer::getInstance().getStrRootPath()).arg(caName); // 用户文件系统根目录
+            qDebug() << "登录用户的路径：" << strUserRootPath;
+            resPdu = mkPDU(strUserRootPath.size() + 1);
+            memcpy(resPdu -> caData, LOGIN_OK, 32);
+            memcpy(resPdu -> caData + 32, caName, 32); // 将登录后的用户名传回，便于tcpclient确认已经登陆的用户名
+            // 在登陆成功时，记录Socket对应的用户名
+            m_strName = caName;
+            // qDebug() << "m_strName: " << m_strName;
+            // 返回用户的根目录
+            strncpy((char*)resPdu -> caMsg, strUserRootPath.toStdString().c_str(), strUserRootPath.size() + 1);
+        }
+        else
+        {
+            resPdu = mkPDU(0);
+            strcpy(resPdu -> caData, LOGIN_FAILED);
+        }
+        resPdu -> uiMsgType = ENUM_MSG_TYPE_LOGIN_RESPOND;
+        qDebug() << "登录处理：" << resPdu -> uiMsgType << " " << resPdu ->caData << " " << resPdu ->caData + 32;
+
+        return resPdu;
+
 }
 
 // 处理查询所有在线用户的请求

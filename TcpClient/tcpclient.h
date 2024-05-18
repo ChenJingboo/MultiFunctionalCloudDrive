@@ -46,6 +46,9 @@ private:
     QTcpSocket m_tcpSocket; // TCPSocket用来和服务器连接与交互
     QString m_strIP;        // 存储配置文件读取到的IP地址
     quint16 m_usPort;       // 无符号16位整型 存储配置文件的端口号
+
     QString m_strName;      // 该客户端用户名
+    QString m_strRootPath;  // 用户根目录
+    QString m_strCurPath;   // 当前目录
 };
 #endif // TCPCLIENT_H

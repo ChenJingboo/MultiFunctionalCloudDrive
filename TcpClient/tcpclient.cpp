@@ -57,16 +57,40 @@ void TcpClient::recvMsg()
     }
     case ENUM_MSG_TYPE_LOGIN_RESPOND: // 登录响应
     {
+//        if(0 == strcmp(pdu -> caData, LOGIN_OK))
+//        {
+//            //默认请求一次好友列表
+////            OpenWidget::getInstance().getFriend()-> flushFriendList();
+//            char caName[32] = {'\0'};
+//            strncpy(caName, pdu -> caData + 32, 32); // 设置已登录用户名
+//            QMessageBox::information(this, "登录", LOGIN_OK);
+//            OpenWidget::getInstance().show(); // 登录成功显示多级窗口界面
+//            m_strName = caName;
+//            this->hide(); // 隐藏登录窗口
+//        }
+//        else if(0 == strcmp(pdu -> caData, LOGIN_FAILED))
+//        {
+//            QMessageBox::warning(this, "登录", LOGIN_FAILED);
+//        }
+//        break;
         if(0 == strcmp(pdu -> caData, LOGIN_OK))
         {
-            //默认请求一次好友列表
-//            OpenWidget::getInstance().getFriend()-> flushFriendList();
+            QMessageBox::information(this, "登录", LOGIN_OK);
             char caName[32] = {'\0'};
             strncpy(caName, pdu -> caData + 32, 32); // 设置已登录用户名
-            QMessageBox::information(this, "登录", LOGIN_OK);
-            OpenWidget::getInstance().show(); // 登录成功显示多级窗口界面
+            // 设置用户根目录和当前目录
+            m_strRootPath = QString((char*)pdu -> caMsg);
+            qDebug() << "用户根目录 " << m_strRootPath;
+            m_strCurPath = m_strRootPath;
             m_strName = caName;
-            this->hide(); // 隐藏登录窗口
+            qDebug() << "用户已登录：" << caName << " strName：" << m_strName;
+            // 登录跳转
+            OpenWidget::getInstance().setUserLabel(caName); // 设置主页面用户信息
+            OpenWidget::getInstance().show(); // 显示主操作页面
+            // 默认请求一次好友列表
+//            OpenWidget::getInstance().getFriend() -> flushFriendList();
+
+            this -> hide(); // 隐藏登陆页面
         }
         else if(0 == strcmp(pdu -> caData, LOGIN_FAILED))
         {

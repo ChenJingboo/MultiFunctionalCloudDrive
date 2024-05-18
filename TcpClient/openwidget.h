@@ -9,6 +9,7 @@
 
 #include <QWidget>
 #include <QListWidget>
+#include <QLabel>
 
 class Friend;
 class Book;
@@ -22,12 +23,14 @@ public:
     explicit OpenWidget(QWidget *parent = nullptr);
     Friend* getFriend() const;
     static OpenWidget& getInstance();
+    void setUserLabel(const char* name); // 设置登录用户信息的Label值
 
 signals:
 
 public slots:
 
 private:
+    QLabel *m_pUserLabel;       // 标识客户端登录用户信息
     QListWidget* m_pListW;
     Friend *m_pFriend;
     Book* m_pBook;
