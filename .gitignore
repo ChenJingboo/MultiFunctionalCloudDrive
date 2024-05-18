@@ -2,3 +2,5 @@
 *.txt
 # 忽略所有以build开头的目录
 build*/
+# 忽略所有的.user文件
+*.user
