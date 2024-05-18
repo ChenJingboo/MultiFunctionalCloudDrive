@@ -21,7 +21,7 @@ Book::Book(QWidget *parent) : QWidget(parent)
     m_pShareFilePB = new QPushButton("分享文件");
     m_pMoveFilePB = new QPushButton("移动文件");
     m_pMoveDesDirDB = new QPushButton("目标目录");
-    m_pMoveDesDirDB->setEnabled(false); // 设置目标文件不可点击
+    m_pMoveDesDirDB->setEnabled(false); // 设置目标文件不可点击1
 
     QHBoxLayout *pFileOpVBL = new QHBoxLayout;
     pFileOpVBL -> addWidget(m_pUploadFilePB);

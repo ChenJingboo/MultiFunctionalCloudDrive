@@ -26,7 +26,7 @@ private:
     QPushButton *m_pRenameFilePB;   // 重命名文件
     QPushButton *m_pUploadFilePB;   // 上传文件
     QPushButton *m_pDownloadFilePB; // 下载文件
-    QPushButton *m_pShareFilePB;    // 分享文件
+    QPushButton *m_pShareFilePB;    // 分享文件1
 
     QPushButton *m_pMoveFilePB;     // 移动文件
     QPushButton *m_pMoveDesDirDB;   // 移动目标目录
