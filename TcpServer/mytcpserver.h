@@ -16,12 +16,15 @@ public:
     void incomingConnection(qintptr handle) override;
     bool forwardMsg(const QString caDesName, PDU *pdu); // 服务器转发给其他客户端消息
     ~MyTcpServer();
+    QString getStrRootPath() const;
+    void setStrRootPath(const QString &strRootPath);
 
 public slots:
     void deleteSocket(MyTcpSocket* mySocket);
 
 private:
     QList<MyTcpSocket*> m_tcpSocketList; // 存储服务器所有已经建立的Socket连接
+    QString m_strRootPath; // 文件系统根目录
 };
 
 #endif // MYTCPSERVER_H

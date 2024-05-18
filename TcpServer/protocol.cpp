@@ -1,5 +1,6 @@
 #include "protocol.h"
 #include "mytcpserver.h"
+#include <QDir>
 
 PDU *mkPDU(uint uiMsgLen)
 {
@@ -20,12 +21,36 @@ PDU *mkPDU(uint uiMsgLen)
 // 处理注册请求并返回响应PDU
 PDU* handleRegistRequest(PDU* pdu)
 {
+//    char caName[32] = {'\0'};
+//    char caPwd[32] = {'\0'};
+//    // 拷贝读取的信息
+//    strncpy(caName, pdu -> caData, 32);
+//    strncpy(caPwd, pdu -> caData + 32, 32);
+//    qDebug() << pdu -> uiMsgType << " " << caName << " " << caPwd;
+//    bool ret = DBOperate::getInstance().handleRegist(caName, caPwd); // 处理请求，插入数据库
+
+//    // 响应客户端
+//    PDU *resPdu = mkPDU(0); // 响应消息
+//    resPdu -> uiMsgType = ENUM_MSG_TYPE_REGIST_RESPOND;
+//    if(ret)
+//    {
+//        strcpy(resPdu -> caData, REGIST_OK);
+//    }
+//    else
+//    {
+//        strcpy(resPdu -> caData, REGIST_FAILED);
+//    }
+//    // qDebug() << resPdu -> uiMsgType << " " << resPdu ->caData;
+
+//    return resPdu;
+
+    qDebug() << "Enter PDU* handleRegistRequest(PDU* pdu)";
+
     char caName[32] = {'\0'};
     char caPwd[32] = {'\0'};
     // 拷贝读取的信息
     strncpy(caName, pdu -> caData, 32);
     strncpy(caPwd, pdu -> caData + 32, 32);
-    qDebug() << pdu -> uiMsgType << " " << caName << " " << caPwd;
     bool ret = DBOperate::getInstance().handleRegist(caName, caPwd); // 处理请求，插入数据库
 
     // 响应客户端
@@ -34,14 +59,18 @@ PDU* handleRegistRequest(PDU* pdu)
     if(ret)
     {
         strcpy(resPdu -> caData, REGIST_OK);
+        // 注册成功，为新用户按用户名创建文件夹
+        QDir dir;
+        ret = dir.mkdir(QString("%1/%2").arg(MyTcpServer::getInstance().getStrRootPath()).arg(caName));
+        qDebug() << "创建新用户文件夹" << ret;
     }
-    else
+    if(!ret)
     {
         strcpy(resPdu -> caData, REGIST_FAILED);
     }
-    // qDebug() << resPdu -> uiMsgType << " " << resPdu ->caData;
 
     return resPdu;
+
 }
 
 PDU* handleLoginRequest(PDU* pdu, QString& m_strName)

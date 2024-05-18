@@ -68,3 +68,13 @@ void MyTcpServer::deleteSocket(MyTcpSocket *mySocket)
         qDebug() << tmp;
     }
 }
+
+QString MyTcpServer::getStrRootPath() const
+{
+    return m_strRootPath;
+}
+
+void MyTcpServer::setStrRootPath(const QString &strRootPath)
+{
+    m_strRootPath = strRootPath;
+}
