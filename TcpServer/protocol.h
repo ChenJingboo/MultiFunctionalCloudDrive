@@ -81,6 +81,9 @@ enum ENUM_MSG_TYPE
     ENUM_MSG_TYPE_CREATE_DIR_REQUEST, // 新建文件夹请求
     ENUM_MSG_TYPE_CREATE_DIR_RESPOND, // 新建文件夹回复
 
+    ENUM_MSG_TYPE_FLUSH_DIR_REQUEST, // 刷新文件夹请求
+    ENUM_MSG_TYPE_FLUSH_DIR_RESPOND, // 刷新文件夹回复
+
     ENUM_MSG_TYPE_MAX = 0x00ffffff,// uint最大值 Oxffffffff
 };
 
@@ -95,6 +98,15 @@ struct PDU
     int caMsg[];         // 实际消息，主要通过caMsg访问消息数据
 };
 
+// 文件信息结构体
+struct FileInfo
+{
+    char caName[32];     // 文件名字
+    bool bIsDir;         // 文件类型，是否为文件夹
+    long long uiSize;         // 文件大小
+    char caTime[128];    // 修改时间
+};
+
 PDU *mkPDU(uint uiMsgLen); // 创建PDU，uiMsglen是可变的，总大小可有其计算得到
 PDU* handleRegistRequest(PDU* pdu); // 处理注册请求并返回响应PDU
 PDU* handleLoginRequest(PDU* pdu, QString& m_strName); // 处理登录请求并返回响应PDU
@@ -105,5 +117,6 @@ PDU* handleFlushFriendRequest(PDU* pdu);    // 刷新好友列表请求
 PDU* handleDeleteFriendRequest(PDU* pdu);   // 删除好友请求
 PDU* handlePrivateChatRequest(PDU* pdu);    // 私聊发送消息请求
 PDU* handleCreateDirRequest(PDU* pdu);      // 创建文件夹请求处理
+PDU* handleFlushDirRequest(PDU* pdu);       // 刷新文件夹请求处理
 
 #endif // PROTOCOL_H

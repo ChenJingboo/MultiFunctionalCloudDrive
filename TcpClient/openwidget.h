@@ -10,11 +10,11 @@
 #include <QWidget>
 #include <QListWidget>
 #include <QLabel>
-
-class Friend;
-class Book;
-
 #include <QStackedWidget>
+
+#include "friend.h"
+#include "book.h"
+
 
 class OpenWidget : public QWidget
 {
@@ -24,6 +24,7 @@ public:
     Friend* getFriend() const;
     static OpenWidget& getInstance();
     void setUserLabel(const char* name); // 设置登录用户信息的Label值
+    Book *getPFileSystem() const;
 
 signals:
 
@@ -35,6 +36,7 @@ private:
     Friend *m_pFriend;
     Book* m_pBook;
     QStackedWidget* m_pSw;
+    Book *m_pFileSystem;  // 文件页面
 
 };
 

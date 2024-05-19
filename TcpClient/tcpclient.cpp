@@ -1,7 +1,11 @@
 #include "tcpclient.h"
 #include "ui_tcpclient.h"
-#include "openwidget.h"  // 现在这里包含它
-#include "friend.h"
+#include <QByteArray>
+#include <QDebug> // 调试
+#include <QMessageBox> // 消息提示框
+#include <QHostAddress>
+
+#include "protocol.h"
 
 TcpClient::TcpClient(QWidget *parent)
     : QWidget(parent)
@@ -57,22 +61,6 @@ void TcpClient::recvMsg()
     }
     case ENUM_MSG_TYPE_LOGIN_RESPOND: // 登录响应
     {
-//        if(0 == strcmp(pdu -> caData, LOGIN_OK))
-//        {
-//            //默认请求一次好友列表
-////            OpenWidget::getInstance().getFriend()-> flushFriendList();
-//            char caName[32] = {'\0'};
-//            strncpy(caName, pdu -> caData + 32, 32); // 设置已登录用户名
-//            QMessageBox::information(this, "登录", LOGIN_OK);
-//            OpenWidget::getInstance().show(); // 登录成功显示多级窗口界面
-//            m_strName = caName;
-//            this->hide(); // 隐藏登录窗口
-//        }
-//        else if(0 == strcmp(pdu -> caData, LOGIN_FAILED))
-//        {
-//            QMessageBox::warning(this, "登录", LOGIN_FAILED);
-//        }
-//        break;
         if(0 == strcmp(pdu -> caData, LOGIN_OK))
         {
             QMessageBox::information(this, "登录", LOGIN_OK);
@@ -108,7 +96,6 @@ void TcpClient::recvMsg()
     {
         if(0 == strcmp(SEARCH_USER_OK, pdu -> caData))
         {
-//            QMessageBox::information(this, "查找", OpenWidget::getInstance().getFriend()->getStrSearchName() + SEARCH_USER_OK);
             //bug：没有显示用户名。是因为没有设置用户名，故导致没法返回用户名
             QMessageBox::information(this,"搜索",QString("%1: online").arg(OpenWidget::getInstance().getFriend()->getStrSearchName()));
         }
@@ -192,6 +179,12 @@ void TcpClient::recvMsg()
         {
             priChatW->showNormal();
         }
+        break;
+    }
+    case ENUM_MSG_TYPE_FLUSH_DIR_RESPOND: // 刷新文件夹响应
+    {
+//        OpenWidget::getInstance().getPFileSystem()->updateFileList(pdu);
+        OpenWidget::getInstance().getPFileSystem()->testForListWidget();
         break;
     }
     default:

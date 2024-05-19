@@ -1,6 +1,9 @@
 #include "protocol.h"
 #include "mytcpserver.h"
+
 #include <QDir>
+#include <QDate>
+#include <QFileInfo>
 
 PDU *mkPDU(uint uiMsgLen)
 {
@@ -59,23 +62,6 @@ PDU* handleLoginRequest(PDU* pdu, QString& m_strName)
     strncpy(caPwd, pdu -> caData + 32, 32);
     qDebug() << pdu -> uiMsgType << " " << caName << " " << caPwd;
     bool ret = DBOperate::getInstance().handleLogin(caName, caPwd); // 处理请求，插入数据库
-
-//    // 响应客户端
-//    PDU *resPdu = mkPDU(0); // 响应消息
-//    resPdu -> uiMsgType = ENUM_MSG_TYPE_LOGIN_RESPOND;
-//    if(ret)
-//    {
-//        memcpy(resPdu -> caData, LOGIN_OK, 32);
-//        memcpy(resPdu -> caData + 32, caName, 32); // 将登录后的用户名传回，便于tcpclient确认已经登陆的用户名
-//        m_strName = caName;
-//    }
-//    else
-//    {
-//        strcpy(resPdu -> caData, LOGIN_FAILED);
-//    }
-//    // qDebug() << resPdu -> uiMsgType << " " << resPdu ->caData;
-
-//    return resPdu;
 
     // 响应客户端
         PDU *resPdu = NULL; // 响应消息
@@ -322,6 +308,48 @@ PDU* handleCreateDirRequest(PDU* pdu)
     {
         strncpy(resPdu -> caData, PATH_NOT_EXIST, 32);
     }
+
+    return resPdu;
+}
+
+// 刷新文件夹请求处理
+PDU* handleFlushDirRequest(PDU* pdu)
+{
+    qDebug() << "Enter PDU* handleFlushDirRequest(PDU* pdu)";
+
+    char caCurDir[pdu -> uiMsgLen];
+    memcpy(caCurDir, (char*)pdu -> caMsg, pdu -> uiMsgLen);
+    qDebug() << "刷新文件夹：" << caCurDir;
+    QDir dir;
+    PDU* resPdu = NULL;
+
+    if(!dir.exists(caCurDir)) // 请求文件夹不存在
+    {
+        resPdu = mkPDU(0);
+        strncpy(resPdu -> caData, PATH_NOT_EXIST, 32);
+    }
+    else // 存在
+    {
+        dir.setPath(caCurDir); // 设置为当前目录
+        QFileInfoList fileInfoList = dir.entryInfoList(); // 获取当前目录下所有文件
+        int iFileNum = fileInfoList.size();
+
+        resPdu = mkPDU(sizeof(FileInfo) * iFileNum);
+        FileInfo *pFileInfo = NULL; // 创建一个文件信息结构体指针，方便之后遍历PDU空间来赋值
+
+        for(int i = 0; i < iFileNum; ++ i)
+        {
+            pFileInfo = (FileInfo*)(resPdu -> caMsg) + i; // 通过指针指向，直接修改PDU空间值，每次偏移FileInfo大小
+            memcpy(pFileInfo -> caName, fileInfoList[i].fileName().toStdString().c_str(), fileInfoList[i].fileName().size());
+            pFileInfo -> bIsDir = fileInfoList[i].isDir();
+            pFileInfo -> uiSize = fileInfoList[i].size();
+            QDateTime dtLastTime = fileInfoList[i].lastModified(); // 获取文件最后修改时间
+            QString strLastTime = dtLastTime.toString("yyyy/MM/dd hh:mm");
+            memcpy(pFileInfo -> caTime, strLastTime.toStdString().c_str(), strLastTime.size());
+            qDebug() << "文件信息：" << pFileInfo -> caName << " " << pFileInfo -> bIsDir << " " << pFileInfo -> uiSize << " " << pFileInfo -> caTime;
+        }
+    }
+    resPdu -> uiMsgType = ENUM_MSG_TYPE_FLUSH_DIR_RESPOND;
 
     return resPdu;
 }

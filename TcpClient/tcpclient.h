@@ -2,16 +2,9 @@
 #define TCPCLIENT_H
 
 #include <QWidget>
-#include <QString>
+#include <QFile> // 操作文件，在这里主要为了启动时访问配置文件
 #include <QTcpSocket> // 建立TCP会话连接，为了实现TCP客户端连接服务器及与数据库交互
-#include <QMessageBox>
-#include <QPushButton>
-#include <QDebug>
-#include <QFile>
-#include <QHostAddress>
-
-#include "protocol.h"
-class OpenWidget;   //前置声明
+#include <openwidget.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class TcpClient; }

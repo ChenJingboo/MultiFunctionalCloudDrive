@@ -52,6 +52,17 @@ struct PDU
 
 PDU *mkPDU(uint uiMsgLen); // 创建PDU，uiMsglen是可变的，总大小可有其计算得到
 
+// 文件信息结构体
+struct FileInfo
+{
+    char caName[32];     // 文件名字
+    bool bIsDir;         // 文件类型，是否为文件夹
+    long long uiSize;    // 文件大小
+    char caTime[128];    // 修改时间
+};
+
+
+
 //枚举方式，定义消息类型
 enum ENUM_MSG_TYPE
 {
@@ -90,6 +101,9 @@ enum ENUM_MSG_TYPE
     // 文件操作
     ENUM_MSG_TYPE_CREATE_DIR_REQUEST, // 新建文件夹请求
     ENUM_MSG_TYPE_CREATE_DIR_RESPOND, // 新建文件夹回复
+
+    ENUM_MSG_TYPE_FLUSH_DIR_REQUEST, // 刷新文件夹请求
+    ENUM_MSG_TYPE_FLUSH_DIR_RESPOND, // 刷新文件夹回复
 
     ENUM_MSG_TYPE_MAX = 0x00fffff, //uint最大值Oxffffffff
 };

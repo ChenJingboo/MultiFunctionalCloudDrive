@@ -112,6 +112,11 @@ void MyTcpSocket::recvMsg()
             resPdu = handleCreateDirRequest(pdu);
             break;
         }
+        case ENUM_MSG_TYPE_FLUSH_DIR_REQUEST: // 刷新文件夹请求
+        {
+            resPdu = handleFlushDirRequest(pdu);
+            break;
+        }
         default:
             break;
     }

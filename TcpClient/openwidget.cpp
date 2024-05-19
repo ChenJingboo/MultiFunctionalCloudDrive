@@ -1,6 +1,4 @@
 #include "openwidget.h"
-#include "friend.h"   // 包含 Friend 类的头文件
-#include "book.h"     // 包含 Book 类的头文件
 
 OpenWidget::OpenWidget(QWidget *parent) : QWidget(parent)
 {
@@ -48,4 +46,9 @@ OpenWidget &OpenWidget::getInstance()
 void OpenWidget::setUserLabel(const char *name)
 {
     m_pUserLabel->setText(name);
+}
+
+Book *OpenWidget::getPFileSystem() const
+{
+    return m_pFileSystem;
 }

@@ -7,16 +7,22 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 
+#include "protocol.h"
+
 class Book : public QWidget
 {
     Q_OBJECT
 public:
     explicit Book(QWidget *parent = nullptr);
+    void updateFileList(PDU* pdu);
+
+    void testForListWidget();
 
 signals:
 
 public slots:
     void createDir();               // 创建文件夹
+    void flushDir();                // 刷新文件夹
 
 private:
     QListWidget *m_pFileListW;      // 文件列表，显示所有文件
